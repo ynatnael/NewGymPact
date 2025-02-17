@@ -8,6 +8,7 @@ from django.shortcuts import render, HttpResponse, redirect
 def home(request):
     return render(request, "home/home.html")
 
+
 def signUp(request):
     if request.method == "POST":
         username = request.POST.get("email")
@@ -15,11 +16,12 @@ def signUp(request):
         notificationEmail = request.POST.get("notificationEmail")
         goal = int(request.POST.get("goal"))
 
-        # Save user data if new
+        # Check if user already exists
         try:
             user = UserList.objects.get(username=username)
             print(f"Existing user found: {user}")
         except UserList.DoesNotExist:
+            # Create a new user if it doesn't exist
             user = UserList.objects.create(
                 username=username,
                 pin=pin,
@@ -28,8 +30,8 @@ def signUp(request):
             )
             print(f"New user created: {user}")
 
-        # Perform the gym check
-        visits = checkVisits(username, pin, notificationEmail,goal)
+        # Perform the gym check regardless of whether user is new or existing
+        visits = checkVisits(username, pin, notificationEmail, goal)
         for visit in visits:
             visit['duration'] = round(visit['duration'] / 60000, 2)  # Convert duration to minutes
             visit['checkInDate'] = datetime.fromisoformat(visit['checkInDate'])
@@ -38,11 +40,12 @@ def signUp(request):
             del visit['checkInDate']  # Remove original checkInDate
             del visit['gymLocationAddress']  # Remove address field
 
-        #visit count
-
         return render(request, "home/success.html", {
-        'visits': visits})
+            'visits': visits
+        })
+
     return render(request, "signUp.html")
+
 
 def success(request):
     return render(request, "home/success.html")

@@ -2,11 +2,12 @@ import requests
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 import yagmail
+from decouple import config, Csv
+
 import os
 
 
 #def sendEmail(subject,contents,recipient):
-
 
 def login(username,password):
     base_headers = {
@@ -56,8 +57,8 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
 
     mins=0
 
-    gmail_user = 'natnaelyousef@gmail.com'
-    gmail_password = 'lifu pbhz kmgz ntgo'
+    gmail_user = config('GMAIL_USER')
+    gmail_password = config('GMAIL_PASSWORD')
 
     if not gmail_user and gmail_password:
         raise ValueError("GMAIL_USER or GMAIL_PASSWORD is not set in environment variables")

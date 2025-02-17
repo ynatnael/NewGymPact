@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config, Csv
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vo8rw!8-6f-(7l855+^hmedgnxpsa%hq&hasg79mi&1+q98mi!'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['127.0.0.1','.vercel.app', 'aws-0-eu-west-2.pooler.supabase.com']
 
@@ -90,7 +93,7 @@ else:
             'HOST': 'aws-0-eu-west-2.pooler.supabase.com',
             'NAME': 'postgres',
             'USER':  'postgres.jgrwekxphiajjlafxysy',
-            'PASSWORD': '3PVP5JrmU586uoG8',
+            'PASSWORD': config('DB_PASSWORD'),
             'PORT': '6543'
         }
     }
