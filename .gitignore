@@ -1,0 +1,28 @@
+# Python-related
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Virtual environment
+venv/
+env/
+.env/
+
+# Django-related
+*.env
+*.DS_Store
+
+# IDE-related
+.idea/
+.vscode/
+
+# Coverage reports and testing
+*.coverage
+.tox/
+.nox/
+*.egg-info/
+*.dist-info/
