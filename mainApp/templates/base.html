@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/staticfiles/images/favicon.ico" type="image/x-icon">
+    <title>Bootstrap Header Example</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .card {
+            background-color: #d35400;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .card h5 {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="background-color: #e0cdb6;">
+    <!-- Header Section -->
+    <header class="d-flex justify-content-between align-items-center p-3 " style="background-color: #dbbb93;">
+        <!-- Logo -->
+        <div>
+            <img style ="max-width:150px; margin-left:30px;" src="{% static 'images/logo.png' %}" alt="Logo" class="img-fluid" style="max-width: 100px; height: auto;">
+        </div>
+        <!-- Buttons -->
+        <div>
+
+            <a href="{% url 'signUp' %}" class="btn btn-primary me-2">Sign Up</a>
+            <button class="btn btn-outline-primary">Log In</button>
+        </div>
+    </header>
+
+
+    <!-- In between the next 2 lines is where you inject the html from the other file, to use this as a template -->
+    {% block content %}
+    {% endblock %}
+
+
+
+    <!-- Bootstrap JS (Optional, if needed for interactive components) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

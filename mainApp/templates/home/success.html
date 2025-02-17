@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+{% load static %}
+
+<!-- Use json_script to safely inject JSON data -->
+{{ visits|json_script:"visits-data" }}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Retrieve visits data correctly from the injected JSON
+        let visits = JSON.parse(document.getElementById("visits-data").textContent);
+
+        function filterVisits(timeframe) {
+            let now = new Date();
+            let pastDate;
+
+            if (timeframe === "weekly") {
+                pastDate = new Date();
+                pastDate.setDate(now.getDate() - 7); // Last 7 days
+            } else if (timeframe === "monthly") {
+                pastDate = new Date();
+                pastDate.setMonth(now.getMonth() - 1); // Last 30 days
+            } else if (timeframe === "yearly") {
+                pastDate = new Date();
+                pastDate.setFullYear(now.getFullYear() - 1); // Last 365 days
+            }
+
+            // Filter visits based on the timeframe
+            let filteredVisits = visits.filter(visit => {
+                let visitDate = new Date(visit.date);
+                return visitDate >= pastDate;
+            });
+
+            // Update table content
+            let tableBody = document.getElementById("visits-table-body");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            if (filteredVisits.length > 0) {
+                filteredVisits.forEach(visit => {
+                    let row = `<tr>
+                        <td>${visit.date}</td>
+                        <td>${visit.time}</td>
+                        <td>${visit.duration}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = `<tr><td colspan="3" class="text-center">No visits found in this period.</td></tr>`;
+            }
+
+            // Display total visits count
+            document.getElementById("visit-count").innerText = `${filteredVisits.length} visits in the past ${timeframe}`;
+
+            // Ensure duration is a number and calculate total duration spent at the gym
+            let totalDuration = filteredVisits.reduce((sum, visit) => {
+                let duration = parseFloat(visit.duration);  // Ensure it's treated as a number
+                return sum + (isNaN(duration) ? 0 : duration);  // Handle invalid numbers
+            }, 0);
+
+            document.getElementById("total-duration").innerText = `Total time spent: ${totalDuration.toFixed(2)} minutes`;
+        }
+
+        // Attach event listeners to buttons dynamically
+        document.getElementById("weekly-btn").addEventListener("click", () => filterVisits("weekly"));
+        document.getElementById("monthly-btn").addEventListener("click", () => filterVisits("monthly"));
+        document.getElementById("yearly-btn").addEventListener("click", () => filterVisits("yearly"));
+    });
+</script>
+
+<!-- Page Content -->
+<div class="container mt-4">
+    <h1 style="font-size: 70px; margin-top: 100px;">Welcome</h1>
+    <p style="font-size: 20px; margin-top: 20px; margin-bottom: 90px;">
+        You have successfully signed in, below is your recent visit history, more stats coming soon! <br>
+        From now on we will send you and your accountability partner a weekly email saying whether or not you've hit your goal, as well as some other useful stats.
+    </p>
+</div>
+
+<div class="container">
+    <h2>Gym Visit Dashboard</h2>
+
+    <div class="btn-group mb-3">
+        <button id="weekly-btn" class="btn btn-primary">Weekly</button>
+        <button id="monthly-btn" class="btn btn-primary">Monthly</button>
+        <button id="yearly-btn" class="btn btn-primary">Yearly</button>
+    </div>
+
+    <h4 id="total-duration">Total time spent: 0 minutes</h4>
+    <h4 id="visit-count"></h4>
+</div>
+
+<div class="container mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Duration (Minutes)</th>
+            </tr>
+        </thead>
+        <tbody id="visits-table-body">
+            <tr><td colspan="3" class="text-center">Select a timeframe to display visits</td></tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

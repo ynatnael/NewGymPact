@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %} Home Page {% endblock%}
+{% block content %}
+{% load static %}
+
+
+<!-- Optional Content -->
+<div class="container mt-4">
+    <h1 style="font-size: 70px; margin-top: 100px;">Turning Promises</h1>
+    <h1 style="font-size: 70px;">Into Progress</h1>
+    <p style="font-size: 20px; margin-top: 20px; margin-bottom: 90px;">Let us help you stay consistent with your gym habits through proven accountability techniques <br> Powered by real data from your gym.</p>
+    <h1 style="font-size: 50px; ">How It Works</h1>
+</div>
+
+<div class="container py-5">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+
+            <div class="col">
+                <div class="card text-center p-4">
+                    <img src="{% static 'images/register.png' %}" alt="Icon">
+                    <h5>Register</h5>
+                    <p>Sign up using your Gym Group login</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-center p-4">
+                    <img src="{% static 'images/partner.png' %}" alt="Icon">
+                    <h5>Set Partner</h5>
+                    <p>Put your accountability partner's email in the relevant box. </p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-center p-4">
+                    <img src="{% static 'images/goal.png' %}" alt="Icon">
+                    <h5>Set Goal</h5>
+                    <p>The goal is the number of sessions you are aiming for every week</p>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-center p-4">
+                    <img src="{% static 'images/notification.png' %}" alt="Icon">
+                    <h5>Get Notified</h5>
+                    <p>Weekly you and your partner will get an email, saying if you've hit your goal or not</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
