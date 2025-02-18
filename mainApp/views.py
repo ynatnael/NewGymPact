@@ -3,11 +3,22 @@ from datetime import datetime, timedelta
 from .gymAPI import checkVisits #Add anything else that comes from my script
 from django.shortcuts import render, HttpResponse, redirect
 
+from django.http import JsonResponse
+import json
+import os
+
+from .gymAPI import checkVisits
+from .models import UserList
+
 
 # Create your views here.
+
+
 def home(request):
     return render(request, "home/home.html")
 
+def success(request):
+    return render(request, "home/success.html")
 
 def signUp(request):
     if request.method == "POST":
@@ -31,7 +42,14 @@ def signUp(request):
             print(f"New user created: {user}")
 
         # Perform the gym check regardless of whether user is new or existing
-        visits = checkVisits(username, pin, notificationEmail, goal)
+        try:
+            visits = checkVisits(username, pin, notificationEmail, goal)
+        except ValueError as e:
+            return render(request, "signUp.html", {"error_message": str(e)})
+        except Exception as e:  # Catch other unexpected errors
+            return render(request, "signUp.html", {"error_message": f"Unexpected error: {str(e)}"})
+
+
         for visit in visits:
             visit['duration'] = round(visit['duration'] / 60000, 2)  # Convert duration to minutes
             visit['checkInDate'] = datetime.fromisoformat(visit['checkInDate'])
@@ -46,6 +64,38 @@ def signUp(request):
 
     return render(request, "signUp.html")
 
+"""
+def runWeeklyCheck(request):
+    #API endpoint to manually trigger the gym visit check.
 
-def success(request):
-    return render(request, "home/success.html")
+    if request.method == "POST":
+        print(f"Valid method: {request.method}")  # Debugging
+        secret_key = request.headers.get("Authorization")  # Simple security check
+        expected_key = os.getenv("CRON_SECRET_KEY")
+
+        print(f"Received secret key: {secret_key}")  # Debugging
+        print(f"Expected secret key: {expected_key}")  # Debugging
+
+        if secret_key != expected_key:
+            print("Unauthorized: Invalid secret key")  # Debugging
+            return JsonResponse({"error": "Unauthorized"}, status=403)
+
+
+        users = UserList.objects.all()
+        results = []
+
+
+        for user in users:
+            try:
+                visits = checkVisits(user.username, user.pin, user.notificationEmail, int(user.goal))
+                total_visits = len(visits)
+                status = f"{user.username} has {'met' if total_visits >= user.goal else 'NOT met'} their goal"
+                results.append({"user": user.username, "status": status})
+            except Exception as e:
+                results.append({"user": user.username, "error": str(e)})
+
+        return JsonResponse({"message": "Cron task executed", "results": results}, status=200)
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+"""

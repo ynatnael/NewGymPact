@@ -3,11 +3,14 @@ from datetime import datetime, timedelta
 from urllib.parse import urlencode
 import yagmail
 from decouple import config, Csv
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import json
 
 import os
 
 
-#def sendEmail(subject,contents,recipient):
 
 def login(username,password):
     base_headers = {

@@ -9,5 +9,10 @@
             "src": "/(.*)",
             "dest": "NewGymPact/wsgi.py"
         }
-    ]
+    ],
+    "crons": [{
+        "path": "/NewGymPact/mainApp/management/commands/weeklyCommand.py",
+        "schedule": "50 22 * * 1"
+  }]
+
 }

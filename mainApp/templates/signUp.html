@@ -12,6 +12,11 @@
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="email" class="form-label">Your Email</label>
+                    {% if error_message %}
+                    <br>
+                        <label for="email" class="form-label" style="color:red; font-size:0.8rem;">Make sure this email is associated with a valid GymGroup account</label>
+                    <br>
+                    {% endif %}
                     <input type="email" class="form-control" id="email" name="email" placeholder="Your Email address" required>
                 </div>
 

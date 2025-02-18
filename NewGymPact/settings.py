@@ -89,7 +89,7 @@ if DEBUG:
 else:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'HOST': 'aws-0-eu-west-2.pooler.supabase.com',
             'NAME': 'postgres',
             'USER':  'postgres.jgrwekxphiajjlafxysy',
