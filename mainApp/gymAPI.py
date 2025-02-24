@@ -1,14 +1,17 @@
 import requests
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
-import yagmail
+import yagmail # getting rid of this
+from anymail.message import AnymailMessage
 from decouple import config, Csv
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import json
-
 import os
+from django.core.mail import send_mail
+
+#Email docs https://anymail.dev/en/v10.1/esps/brevo/
 
 
 
@@ -79,22 +82,62 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
 
     if pastWeek == goal:
         print('You hit your target this week, Well Done')
-        yag.send(notificationEmail,
-                 "Congratulations On Hitting Your Gym Goals This Week",
-                 f"You hit your target of {goal} sessions this week, Well Done \n Total time spent in the gym this week {pastWeekMins}"
-                 )
+        email = AnymailMessage(
+            subject="Congratulations On Hitting Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[notificationEmail]
+        )
+        email.template_id = 1
+        # Add parameters
+        email.merge_data = {
+            notificationEmail: {
+                "first_name": 'Naty',     #BS tbf
+                "goal": str(goal),
+                "time":str(pastWeekMins),
+                "visits":str(pastWeek) #number of visits that week
+            }
+        }
+        # Send email
+        email.send()
+
     elif pastWeek > goal:
         print('You exceeded your target this week, Well Done')
-        yag.send(notificationEmail,
-                 "Congratulations On Hitting Your Gym Goals This Week",
-                 f"You exceeded your target of {goal} sessions this week, Well Done \n Total time spent in the gym this week {pastWeekMins}"
-                 )
+        email = AnymailMessage(
+            subject="Congratulations On Exceeding Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[notificationEmail]
+        )
+        email.template_id = 2
+        # Add parameters
+        email.merge_data = {
+            notificationEmail: {
+                "first_name": 'Naty',
+                "goal": str(goal),
+                "time": str(pastWeekMins),
+                "visits": str(pastWeek)  # number of visits that week
+            }
+        }
+        # Send email
+        email.send()
     else:
         print('You missed your target this week, Try harder next week')
-        yag.send(notificationEmail,
-                 "Unfortunately You Didn't Hit Your Gym Goals This Week",
-                 f"You missed your target of {goal} sessions this week, Try harder next week \n You went {pastWeek} times \n Total time spent in the gym this week {pastWeekMins}"
-                 )
+        email = AnymailMessage(
+            subject="Unfortunately You Didn't Hit Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[notificationEmail]
+        )
+        email.template_id = 3
+        # Add parameters
+        email.merge_data = {
+            notificationEmail: {
+                "first_name": 'Naty',
+                "goal": str(goal),
+                "time": str(pastWeekMins),
+                "visits": str(pastWeek)  # number of visits that week
+            }
+        }
+        # Send email
+        email.send()
     print(f"Total time spent in the gym this week {pastWeekMins} minutes")
     return visits['checkIns']
 

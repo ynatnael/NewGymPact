@@ -40,8 +40,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mainApp'
+    'mainApp',
+    'rest_framework',
+    'anymail',
 ]
+
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": config('BREVO_API_KEY'),  # Your Brevo API key
+    "DEBUG_API_REQUESTS": False
+}
+
+DEFAULT_FROM_EMAIL = "Naty@gympact.fit"  # Your verified custom domain email
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

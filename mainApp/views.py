@@ -1,14 +1,14 @@
-from .models import UserList
 from datetime import datetime, timedelta
-from .gymAPI import checkVisits #Add anything else that comes from my script
 from django.shortcuts import render, HttpResponse, redirect
-
 from django.http import JsonResponse
 import json
 import os
-
 from .gymAPI import checkVisits
 from .models import UserList
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
 
 
 # Create your views here.
@@ -64,10 +64,11 @@ def signUp(request):
 
     return render(request, "signUp.html")
 
-"""
+
+@api_view(['GET'])
 def runWeeklyCheck(request):
     #API endpoint to manually trigger the gym visit check.
-
+    print(f"Valid method: {request.method}")  # Debugging
     if request.method == "POST":
         print(f"Valid method: {request.method}")  # Debugging
         secret_key = request.headers.get("Authorization")  # Simple security check
@@ -80,10 +81,8 @@ def runWeeklyCheck(request):
             print("Unauthorized: Invalid secret key")  # Debugging
             return JsonResponse({"error": "Unauthorized"}, status=403)
 
-
         users = UserList.objects.all()
         results = []
-
 
         for user in users:
             try:
@@ -96,6 +95,5 @@ def runWeeklyCheck(request):
 
         return JsonResponse({"message": "Cron task executed", "results": results}, status=200)
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return Response({"message": "Scheduler Failed!"}, status=400)
 
-"""
