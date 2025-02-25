@@ -7,6 +7,7 @@ from .gymAPI import checkVisits
 from .models import UserList
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from decouple import config, Csv
 
 
 
@@ -21,11 +22,15 @@ def success(request):
     return render(request, "home/success.html")
 
 def signUp(request):
+
+
     if request.method == "POST":
-        username = request.POST.get("email")
+        username = request.POST.get("username")
+        email = request.POST.get("email")
         pin = request.POST.get("pin")
         notificationEmail = request.POST.get("notificationEmail")
         goal = int(request.POST.get("goal"))
+
 
         # Check if user already exists
         try:
@@ -35,15 +40,17 @@ def signUp(request):
             # Create a new user if it doesn't exist
             user = UserList.objects.create(
                 username=username,
+                email=email,
                 pin=pin,
                 notificationEmail=notificationEmail,
                 goal=goal,
             )
             print(f"New user created: {user}")
 
+
         # Perform the gym check regardless of whether user is new or existing
         try:
-            visits = checkVisits(username, pin, notificationEmail, goal)
+            visits = checkVisits(email, pin, notificationEmail, goal)
         except ValueError as e:
             return render(request, "signUp.html", {"error_message": str(e)})
         except Exception as e:  # Catch other unexpected errors
@@ -65,20 +72,16 @@ def signUp(request):
     return render(request, "signUp.html")
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def runWeeklyCheck(request):
     #API endpoint to manually trigger the gym visit check.
-    print(f"Valid method: {request.method}")  # Debugging
     if request.method == "POST":
-        print(f"Valid method: {request.method}")  # Debugging
+        #logging.info("POST Request received successfully")
         secret_key = request.headers.get("Authorization")  # Simple security check
-        expected_key = os.getenv("CRON_SECRET_KEY")
-
-        print(f"Received secret key: {secret_key}")  # Debugging
-        print(f"Expected secret key: {expected_key}")  # Debugging
+        expected_key = config("WEEKLY_CHECK_SECRET_KEY")
 
         if secret_key != expected_key:
-            print("Unauthorized: Invalid secret key")  # Debugging
+            #logging.error("Key's are not equal or not present")
             return JsonResponse({"error": "Unauthorized"}, status=403)
 
         users = UserList.objects.all()
@@ -86,14 +89,16 @@ def runWeeklyCheck(request):
 
         for user in users:
             try:
-                visits = checkVisits(user.username, user.pin, user.notificationEmail, int(user.goal))
+                visits = checkVisits(user.email, user.pin, user.notificationEmail, int(user.goal))
                 total_visits = len(visits)
                 status = f"{user.username} has {'met' if total_visits >= user.goal else 'NOT met'} their goal"
                 results.append({"user": user.username, "status": status})
+                #logging.info(f'Successfully ran check for {user}')
             except Exception as e:
                 results.append({"user": user.username, "error": str(e)})
+                #logging.error(f'Run failed for {user}')
 
-        return JsonResponse({"message": "Cron task executed", "results": results}, status=200)
+        return JsonResponse({"message": "Task executed", "results": results}, status=200)
 
     return Response({"message": "Scheduler Failed!"}, status=400)
 
