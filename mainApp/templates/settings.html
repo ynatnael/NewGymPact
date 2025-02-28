@@ -1,0 +1,65 @@
+{% extends "base.html" %} {% block title %} Sign Up Page {% endblock%}
+{% block content %}
+{% load static %}
+
+<header class="d-flex justify-content-between align-items-center p-3 " style="background-color: #dbbb93;">
+        <!-- Logo -->
+        <div>
+            <a href="/">
+                <img style ="max-width:150px; margin-left:30px;" src="{% static 'images/logo.png' %}" alt="Homepage" class="img-fluid">
+            </a>
+        </div>
+        <!-- Buttons dependent on the page you are on-->
+        <div>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary">Log Out</a>
+        </div>
+</header>
+
+<title>GymPact - Sign Up</title>
+<div class="container form-container">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <h3 style="margin-top:40px" class="mb-3">Settings</h3>
+            <p>Feel free to update your goal, or who you've set as your accountability partner below</p>
+
+            <form  method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Confirm Username</label>
+                    {% if error_message == 'User not found' %}
+                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username not found</label>
+                    {% endif %}
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pin" class="form-label">Confirm Pin</label>
+                    {% if error_message == 'Wrong pin' %}
+                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">&nbsp;&nbsp;&nbsp;&nbsp;Wrong pin</label>
+                    {% endif %}
+                    <input type="password" class="form-control" id="pin" name="pin" placeholder="Gym Access Pin" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notificationEmail" class="form-label">Accountability Partner's Email</label>
+                    <input type="email" class="form-control" id="notificationEmail" name="notificationEmail" placeholder="New Partner's Email address">
+                </div>
+
+                <div class="mb-3">
+                    <label for="goal" class="form-label">Goal</label>
+                    <input type="text" class="form-control" id="goal" name="goal" placeholder="New Target Sessions Per Week">
+                </div>
+
+                {% if success_message %}
+                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">Update successful</label>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary w-100">Update</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

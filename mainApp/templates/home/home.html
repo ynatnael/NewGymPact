@@ -2,6 +2,23 @@
 {% block content %}
 {% load static %}
 
+
+<header class="d-flex justify-content-between align-items-center p-3 " style="background-color: #dbbb93;">
+        <!-- Logo -->
+        <div>
+            <a href="/">
+                <img style ="max-width:150px; margin-left:30px;" src="{% static 'images/logo.png' %}" alt="Homepage" class="img-fluid">
+            </a>
+        </div>
+        <!-- Buttons dependent on the page you are on-->
+        <div>
+
+            <a href="{% url 'signUp' %}" class="btn btn-primary me-2">Sign Up</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+
+        </div>
+</header>
+
 <title>GymPact - Home</title>
 <!-- Optional Content -->
 <div class="container mt-4">

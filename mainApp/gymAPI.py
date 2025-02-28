@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
-import yagmail # getting rid of this
+
 from anymail.message import AnymailMessage
 from decouple import config, Csv
 import smtplib
@@ -15,7 +15,7 @@ from django.core.mail import send_mail
 
 
 
-def login(username,password):
+def login(email,password):
     base_headers = {
         "accept": "application/json",
         "accept-encoding": "gzip",
@@ -31,7 +31,7 @@ def login(username,password):
     profile_headers = base_headers.copy()
     base_headers["content-length"] = "56"
     base_headers["content-type"] = "application/x-www-form-urlencoded"
-    creds = {"username": username, "password": password}
+    creds = {"username": email, "password": password}
 
     response = requests.post("https://thegymgroup.netpulse.com/np/exerciser/login", data=creds, headers=base_headers)
     cookie = response.headers["Set-Cookie"]
@@ -44,9 +44,10 @@ def get_url(url): # could combine with next function
     return profile.json()
 
 def getVisits(endDate):
+    print(user_id)
     return get_url(f"https://thegymgroup.netpulse.com/np/exercisers/{user_id}/check-ins/history?endDate={endDate}")
 
-def checkVisits(username,pin,notificationEmail,goal): #going to need to change this eventually
+def checkVisits(username,email,pin,notificationEmail,goal): #going to need to change this eventually
 
     # Get today's date and one week ago
     today = datetime.now()
@@ -57,20 +58,11 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
     #startDate = one_week_ago.strftime(date_format)
     endDate = today.strftime(date_format)
 
-    login(username,pin)
+    login(email,pin)
     visits = getVisits(endDate)
-    print(visits)
+    #print(visits)
 
     mins=0
-
-    gmail_user = config('GMAIL_USER')
-    gmail_password = config('GMAIL_PASSWORD')
-
-    if not gmail_user and gmail_password:
-        raise ValueError("GMAIL_USER or GMAIL_PASSWORD is not set in environment variables")
-
-    # Pass credentials explicitly
-    yag = yagmail.SMTP(gmail_user, gmail_password)
 
 
     pastWeek = 0
@@ -91,7 +83,7 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": 'Naty',     #BS tbf
+                "first_name": username,
                 "goal": str(goal),
                 "time":str(pastWeekMins),
                 "visits":str(pastWeek) #number of visits that week
@@ -111,7 +103,7 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": 'Naty',
+                "first_name": username,
                 "goal": str(goal),
                 "time": str(pastWeekMins),
                 "visits": str(pastWeek)  # number of visits that week
@@ -130,7 +122,7 @@ def checkVisits(username,pin,notificationEmail,goal): #going to need to change t
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": 'Naty',
+                "first_name": username,
                 "goal": str(goal),
                 "time": str(pastWeekMins),
                 "visits": str(pastWeek)  # number of visits that week
