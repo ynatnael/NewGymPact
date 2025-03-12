@@ -72,7 +72,7 @@ def signUp(request):
         email = request.POST.get("email")
         pin = request.POST.get("pin")
         notificationEmail = request.POST.get("notificationEmail")
-        goal = int(request.POST.get("goal"))
+        goal = request.POST.get("goal")
 
         # Check if user already exists
         try:
@@ -80,10 +80,13 @@ def signUp(request):
             print(f"Existing user found: {user}")
         except UserList.DoesNotExist:
             # Create a new user if it doesn't exist
+
+            #Removing any non integers from the pin
+            cleanPin = "".join([char for char in pin if char.isdigit()])
             user = UserList.objects.create(
                 username=username,
                 email=email,
-                pin=pin,
+                pin=cleanPin,
                 notificationEmail=notificationEmail,
                 goal=goal,
             )
@@ -94,8 +97,10 @@ def signUp(request):
         try:
             visits = checkVisits(username,email, pin, notificationEmail, goal)
         except ValueError as e:
+            print(e)
             return render(request, "signUp.html", {"error_message": str(e)})
         except Exception as e:  # Catch other unexpected errors
+            print(e)
             return render(request, "signUp.html", {"error_message": f"Unexpected error: {str(e)}"})
 
 

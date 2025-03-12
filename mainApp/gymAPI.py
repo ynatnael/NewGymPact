@@ -47,8 +47,9 @@ def getVisits(endDate):
     print(user_id)
     return get_url(f"https://thegymgroup.netpulse.com/np/exercisers/{user_id}/check-ins/history?endDate={endDate}")
 
-def checkVisits(username,email,pin,notificationEmail,goal): #going to need to change this eventually
-
+def checkVisits(username,userEmail,pin,notificationEmail,goal): #going to need to change this eventually
+    #Change goal to int
+    goal = int(goal)
     # Get today's date and one week ago
     today = datetime.now()
     one_week_ago = today - timedelta(weeks=1)
@@ -58,12 +59,9 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
     #startDate = one_week_ago.strftime(date_format)
     endDate = today.strftime(date_format)
 
-    login(email,pin)
+    login(userEmail,pin)
     visits = getVisits(endDate)
     #print(visits)
-
-    mins=0
-
 
     pastWeek = 0
     pastWeekMins = 0
@@ -74,8 +72,28 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
 
     if pastWeek == goal:
         print('You hit your target this week, Well Done')
+        #Email to user
         email = AnymailMessage(
             subject="Congratulations On Hitting Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[userEmail]
+        )
+        email.template_id = 1
+        # Add parameters
+        email.merge_data = {
+            userEmail: {
+                "first_name": username,
+                "goal": str(goal),
+                "time": str(pastWeekMins),
+                "visits": str(pastWeek)  # number of visits that week
+            }
+        }
+        # Send email
+        email.send()
+
+        #email to partner
+        email = AnymailMessage(
+            subject=f"Congratulate {username} On Hitting Their Gym Goal This Week",
             from_email="Naty@gympact.fit",
             to=[notificationEmail]
         )
@@ -83,7 +101,7 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": username,
+                "first_name": f"{username}'s friend",
                 "goal": str(goal),
                 "time":str(pastWeekMins),
                 "visits":str(pastWeek) #number of visits that week
@@ -94,8 +112,27 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
 
     elif pastWeek > goal:
         print('You exceeded your target this week, Well Done')
+        # Email to user
         email = AnymailMessage(
             subject="Congratulations On Exceeding Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[userEmail]
+        )
+        email.template_id = 2
+        # Add parameters
+        email.merge_data = {
+            userEmail: {
+                "first_name": username,
+                "goal": str(goal),
+                "time": str(pastWeekMins),
+                "visits": str(pastWeek)  # number of visits that week
+            }
+        }
+        # Send email
+        email.send()
+        #Email to partner
+        email = AnymailMessage(
+            subject=f"Congratulate {username} On Exceeding Their Gym Goal This Week",
             from_email="Naty@gympact.fit",
             to=[notificationEmail]
         )
@@ -103,7 +140,7 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": username,
+                "first_name": f"{username}'s friend",
                 "goal": str(goal),
                 "time": str(pastWeekMins),
                 "visits": str(pastWeek)  # number of visits that week
@@ -113,8 +150,26 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
         email.send()
     else:
         print('You missed your target this week, Try harder next week')
+        # Email to user
         email = AnymailMessage(
             subject="Unfortunately You Didn't Hit Your Gym Goals This Week",
+            from_email="Naty@gympact.fit",
+            to=[userEmail]
+        )
+        email.template_id = 3
+        # Add parameters
+        email.merge_data = {
+            userEmail: {
+                "first_name": username,
+                "goal": str(goal),
+                "time": str(pastWeekMins),
+                "visits": str(pastWeek)  # number of visits that week
+            }
+        }
+        # Send email
+        email.send()
+        email = AnymailMessage(
+            subject=f"Unfortunately {username} Didn't Hit Their Gym Goal This Week",
             from_email="Naty@gympact.fit",
             to=[notificationEmail]
         )
@@ -122,7 +177,7 @@ def checkVisits(username,email,pin,notificationEmail,goal): #going to need to ch
         # Add parameters
         email.merge_data = {
             notificationEmail: {
-                "first_name": username,
+                "first_name": f"{username}'s friend",
                 "goal": str(goal),
                 "time": str(pastWeekMins),
                 "visits": str(pastWeek)  # number of visits that week
