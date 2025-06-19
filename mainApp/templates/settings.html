@@ -11,7 +11,15 @@
         </div>
         <!-- Buttons dependent on the page you are on-->
         <div>
-            <a href="{% url 'login' %}" class="btn btn-outline-primary">Log Out</a>
+            {% if user.is_authenticated %}
+                <!-- Show these buttons when user is logged in -->
+                <a href="{% url 'dashboard' %}" class="btn btn-primary me-2">Dashboard</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Logout</a>
+            {% else %}
+                <!-- Show these buttons when user is not logged in -->
+                <a href="{% url 'signUp' %}" class="btn btn-primary me-2">Sign Up</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+            {% endif %}
         </div>
 </header>
 
@@ -26,33 +34,19 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label for="username" class="form-label">Confirm Username</label>
-                    {% if error_message == 'User not found' %}
-                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Username not found</label>
-                    {% endif %}
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-                </div>
-
-                <div class="mb-3">
-                    <label for="pin" class="form-label">Confirm Pin</label>
-                    {% if error_message == 'Wrong pin' %}
-                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">&nbsp;&nbsp;&nbsp;&nbsp;Wrong pin</label>
-                    {% endif %}
-                    <input type="password" class="form-control" id="pin" name="pin" placeholder="Gym Access Pin" required>
-                </div>
-
-                <div class="mb-3">
                     <label for="notificationEmail" class="form-label">Accountability Partner's Email</label>
-                    <input type="email" class="form-control" id="notificationEmail" name="notificationEmail" placeholder="New Partner's Email address">
+                    <input type="email" class="form-control" name="notificationEmail" id="notificationEmail"
+               value="{{ user.notificationEmail|default:'' }}" required>
+
                 </div>
 
                 <div class="mb-3">
                     <label for="goal" class="form-label">Goal</label>
-                    <input type="text" class="form-control" id="goal" name="goal" placeholder="New Target Sessions Per Week">
+                    <input type="number" class="form-control" name="goal" id="goal" value="{{ user.goal|default:3 }}" min="1" required>
                 </div>
 
                 {% if success_message %}
-                        <label for="username" class="form-label" style="color:red; font-size:0.8rem;">Update successful</label>
+                        <label class="form-label" style="color:red; font-size:0.8rem;">Update successful</label>
                 {% endif %}
 
                 <button type="submit" class="btn btn-primary w-100">Update</button>

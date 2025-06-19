@@ -78,12 +78,16 @@
                 <img style ="max-width:150px; margin-left:30px;" src="{% static 'images/logo.png' %}" alt="Homepage" class="img-fluid">
             </a>
         </div>
-        <!-- Buttons dependent on the page you are on-->
         <div>
-
-            <a href="{% url 'settings' %}" class="btn btn-primary me-2">Settings</a>
-            <a href="{% url 'login' %}" class="btn btn-outline-primary">Log Out</a>
-
+            {% if user.is_authenticated %}
+                <!-- Show these buttons when user is logged in -->
+                <a href="{% url 'settings' %}" class="btn btn-outline-primary me-2">Settings</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Logout</a>
+            {% else %}
+                <!-- Show these buttons when user is not logged in -->
+                <a href="{% url 'signUp' %}" class="btn btn-primary me-2">Sign Up</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+            {% endif %}
         </div>
 </header>
 
