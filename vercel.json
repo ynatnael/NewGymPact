@@ -13,6 +13,6 @@
     "crons": [{
         "path": "/NewGymPact/mainApp/management/commands/weeklyCommand.py",
         "schedule": "50 22 * * 1"
-  }],
-    "buildCommand": "python manage.py migrate --noinput"
+    }],
+    "buildCommand": "echo 'Vercel build command executed' && python manage.py migrate --noinput"
 }
