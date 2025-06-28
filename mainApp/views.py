@@ -104,7 +104,7 @@ def signUp(request):
             return render(request, "signup.html")
 
     print("Rendering signup template for GET request")
-    return render(request, "signup.html")
+    return render(request, "signUp.html")
 
 @login_required
 def dashboard(request):
