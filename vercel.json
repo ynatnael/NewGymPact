@@ -14,5 +14,5 @@
         "path": "/NewGymPact/mainApp/management/commands/weeklyCommand.py",
         "schedule": "50 22 * * 1"
     }],
-    "buildCommand": "echo 'Vercel build command executed' && python manage.py migrate --noinput"
+    "buildCommand": "pip install -r requirements.txt && python manage.py migrate --noinput"
 }
