@@ -80,7 +80,7 @@ def signUp(request):
                 password=pin,  # This should be the password
                 pin=pin,
                 goal=goal,
-                # notificationEmail=notificationEmail  # Add this back after adding the field
+                notificationEmail=notificationEmail
             )
             print(f"New user created: {user}")
 
